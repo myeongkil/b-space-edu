@@ -10,8 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const API_VERSION = '/api-v1'
-const AUCTION_APP_PATH = __dirname + '/../fabric-samples/auction/application-javascript';
-
+const AUCTION_APP_PATH = __dirname + '/../../auction/application-javascript';
 
 app.listen(port, () => {
   console.log(`auction-command-runner API-server: listening on port ${port}`)
@@ -21,7 +20,7 @@ app.listen(port, () => {
 app.post(`${API_VERSION}/admin/enroll`, async (req, res) => {
   const org = req.body.org;
 
-  await exec(`node ${AUCTION_APP_PATH}/enrollAdmin.js ${org}`, (error, stdout, stderr) => {
+  exec(`node ${AUCTION_APP_PATH}/enrollAdmin.js ${org}`, (error, stdout, stderr) => {
     if (error) {
       console.error(error);
       res.json({
