@@ -1,0 +1,85 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.2.3/milligram.min.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    </head>
+
+    <body class="container">
+        <div class="w3-sidebar w3-bar-block" style="width:200px">
+            <a href="ready.html" class="w3-bar-item w3-button">0. Ready</a>
+            <a href="enroll-admin.html" class="w3-bar-item w3-button">1. Enroll Admin</a>
+            <a href="register-user.html" class="w3-bar-item w3-button">2. Register User</a>
+            <a href="create-auction.html" class="w3-bar-item w3-button">3. Create Auction</a>
+            <a href="create-bid.html" class="w3-bar-item w3-button">4. Create bid</a>
+            <a href="submit-bid.html" class="w3-bar-item w3-button">5. Submit bid</a>
+            <a href="close-auction.html" class="w3-bar-item w3-button">6. Close the auction</a>
+            <a href="reveal-bids.html" class="w3-bar-item w3-button">7. Reveal bids</a>
+            <a href="end-auction.html" class="w3-bar-item w3-button">8. End the auction</a>
+        </div>
+        <div style="margin-left:15%">
+            <div>
+                <h2><a href="register-user.html">2. Register User</a></h2>
+                <h4>#3 블록체인 인력양성 실습 교육</h4>
+                <hr />
+                <div class="row">
+                    <div class="column">
+                        <label>Organization</label>
+                        <select id="org">
+                            <option value="org1">org1</option>
+                            <option value="org2">org2</option>
+                        </select>
+                    </div>
+                    <div class="column">
+                        <label>User id</label>
+                        <input type="search" id="userID" placeholder="bidder1">
+                    </div>
+                    <div class="column">
+                        <label><br /></label>
+                        <button onclick="registerUser()" style="background-color:darkblue;">registerUser</button>
+                    </div>
+                </div>
+                <br /><br />
+                <div class="column">
+                    <label>Result</label>
+                    <blockquote><p><em id="result">Loading..</em></p></blockquote>
+                </div>
+                <hr />
+                <br /><br />
+            </div>
+        </div>
+    </body>
+</html>
+
+
+<script>
+    const registerUser = () => {
+        result = document.getElementById("result");
+        result.innerHTML = "Loading..."
+        const registerUserUrl = 'http://localhost:4000/api-v1/user/register';
+        const org = document.getElementById("org").value;
+        const userID = document.getElementById("userID").value || 'bidder1';
+
+        fetch(registerUserUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                org: org,
+                user_id: userID,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            }
+        })
+        .then(response => {
+            return response.json()
+        })
+        .then(resultJSON => {
+            result = document.getElementById("result")
+            result.innerHTML = JSON.stringify(resultJSON, undefined, 2);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            result = document.getElementById("result")
+            result.innerHTML = error
+        })
+    };
+</script>

@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.2.3/milligram.min.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    </head>
+
+    <body class="container">
+        <div class="w3-sidebar w3-bar-block" style="width:200px">
+            <a href="ready.html" class="w3-bar-item w3-button">0. Ready</a>
+            <a href="enroll-admin.html" class="w3-bar-item w3-button">1. Enroll Admin</a>
+            <a href="register-user.html" class="w3-bar-item w3-button">2. Register User</a>
+            <a href="create-auction.html" class="w3-bar-item w3-button">3. Create Auction</a>
+            <a href="create-bid.html" class="w3-bar-item w3-button">4. Create bid</a>
+            <a href="submit-bid.html" class="w3-bar-item w3-button">5. Submit bid</a>
+            <a href="close-auction.html" class="w3-bar-item w3-button">6. Close the auction</a>
+            <a href="reveal-bids.html" class="w3-bar-item w3-button">7. Reveal bids</a>
+            <a href="end-auction.html" class="w3-bar-item w3-button">8. End the auction</a>
+        </div>
+        <div style="margin-left:15%">
+            <div>
+                <h2><a href="reveal-bids.html">7. Reveal bids</a></h2>
+                <h4>#3 블록체인 인력양성 실습 교육</h4>
+                <hr />
+                <div class="row">
+                    <div class="column">
+                        <label>Auction id</label>
+                        <select id="auctionSelect" onchange="getBids()">
+                        </select>
+                    </div>
+                    <div class="column">
+                        <label>bid id</label>
+                        <select id="bidSelect" onchange="getBidOwner()">
+                        </select>
+                    </div>
+                    <div class="column">
+                        <label>bid Owner</label>
+                        <input type="text" id="bidOwner" disabled>
+                    </div>
+                    <div class="column">
+                        <label><br /></label>
+                        <button onclick="revealBid()" style="background-color:darkblue;">revealBid</button>
+                    </div>
+                </div>
+                <br /><br />
+                <div class="column">
+                    <label>Result</label>
+                    <blockquote><p><em id="result">Loading..</em></p></blockquote>
+                </div>
+                <hr />
+                <br /><br />
+            </div>
+        </div>
+    </body>
+</html>
+
+<script>
+    const auctions = JSON.parse(localStorage.getItem("auctions")) || [];
+    auctions.forEach(auction => {
+        auctionSelect.innerHTML += '<option value="' + auction + '">' + auction + '</option>';
+    });
+
+    const getBids = () => {
+        const auctionID = document.getElementById("auctionSelect").value || 'PaintingAuction';
+        const bids = JSON.parse(localStorage.getItem(auctionID+"_bids")) || [];
+        bidSelect.innerHTML = ''
+        bids.forEach(bid => {
+            bidSelect.innerHTML += '<option value="' + bid + '">' + bid + '</option>';
+        });
+    }
+    getBids();
+
+    const getBidOwner = () => {
+        const bidID = document.getElementById("bidSelect").value || 'bidder1';
+
+        const bidOwner = localStorage.getItem(bidID);
+        const bidOwnerHTML = document.getElementById("bidOwner");
+        bidOwnerHTML.value = bidOwner
+    }
+    getBidOwner();
+
+    const revealBid = () => {
+        result = document.getElementById("result");
+        result.innerHTML = "Loading..."
+        const revealBidUrl = 'http://localhost:4000/api-v1/auction/bid/reveal';
+        const bidOwner = document.getElementById("bidOwner").value || 'org1.bidder1';
+        const bidOwnerArray = bidOwner.split('.');
+
+        const org = bidOwnerArray[0];
+        const userID = bidOwnerArray[1];
+        const auctionID = document.getElementById("auctionSelect").value || 'PaintingAuction';
+        const bidID = document.getElementById("bidSelect").value;
+
+        fetch(revealBidUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+                org: org,
+                user_id: userID,
+                auctionID: auctionID,
+                bid_id: bidID,
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            }
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(resultJSON => {
+            result = document.getElementById("result");
+            result.innerHTML = JSON.stringify(resultJSON, undefined, 2);
+;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            result = document.getElementById("result");
+            result.innerHTML = error;
+        })
+    };
+</script>
