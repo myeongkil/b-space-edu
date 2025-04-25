@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const API_VERSION = '/api-v1'
-const AUCTION_APP_PATH = __dirname + '/../../auction/application-javascript';
+const AUCTION_APP_PATH = __dirname + '/../../../hyperledger/fabric-samples/auction-simple/application-javascript';
 
 app.listen(port, () => {
   console.log(`auction-command-runner API-server: listening on port ${port}`)
